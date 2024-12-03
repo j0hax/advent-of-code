@@ -90,32 +90,6 @@ func (r Report) Safe() bool {
 	return true
 }
 
-func removeAtIndex(s Report, i int) Report {
-	//return append(s[:i], s[i+1:]...)
-	r := make([]int, 0)
-	r = append(r, s[:i]...)
-	return append(r, s[i+1:]...)
-}
-
-// Will remove each single level individually and see if it is still safe
-func (r Report) DampenedSafe() bool {
-	// Try one
-	if r.Safe() {
-		return true
-	}
-
-	// Brute-Force: Remove any individual level and check if it is safe now
-	for i := 0; i < len(r); i++ {
-		cut := removeAtIndex(r, i)
-		fmt.Printf("@%d %v -> %v\n", i, r, cut)
-		if cut.Safe() {
-			return true
-		}
-	}
-
-	return false
-}
-
 func PartOne() {
 	records := ParseRecords("./input2")
 
@@ -128,18 +102,4 @@ func PartOne() {
 	}
 
 	fmt.Printf("Solution for Part One: %d\n", safeCnt)
-}
-
-func PartTwo() {
-	records := ParseRecords("./input2")
-
-	safeCnt := 0
-
-	for _, rep := range records {
-		if rep.DampenedSafe() {
-			safeCnt++
-		}
-	}
-
-	fmt.Printf("Solution for Part Two: %d\n", safeCnt)
 }
