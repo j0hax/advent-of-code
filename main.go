@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/j0hax/aoc2024/five"
 	"github.com/j0hax/aoc2024/four"
 	"github.com/j0hax/aoc2024/one"
 	"github.com/j0hax/aoc2024/three"
@@ -19,4 +20,6 @@ func main() {
 
 	four.PartOne()
 	four.PartTwo()
+
+	five.PartOne()
 }
