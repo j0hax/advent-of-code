@@ -107,8 +107,8 @@ func countDirs(matrix [][]rune, i, j int, substr string) int {
 	return total
 }
 
-// SearchMatrix searches for the word in all directions in the matrix
-func SearchMatrix(matrix [][]rune, substr string) int {
+// WordSearch searches for the word in all directions in the matrix
+func WordSearch(matrix [][]rune, substr string) int {
 	cnt := 0
 	// Find first letter in the matrix, then check each direction
 	for i := range matrix {
@@ -118,5 +118,47 @@ func SearchMatrix(matrix [][]rune, substr string) int {
 			}
 		}
 	}
+	return cnt
+}
+
+// something
+func countX(matrix [][]rune, i, j int, substr string) int {
+	total := 0
+
+	// left to right
+	if remaining(matrix, i-1, j-1, 1, 1, substr) && remaining(matrix, i-1, j+1, 1, -1, substr) {
+		total++
+	}
+
+	// top to bottom
+	if remaining(matrix, i+1, j+1, -1, -1, substr) && remaining(matrix, i-1, j+1, 1, -1, substr) {
+		total++
+	}
+
+	// bottom to top
+	if remaining(matrix, i-1, j-1, 1, 1, substr) && remaining(matrix, i+1, j-1, -1, 1, substr) {
+		total++
+	}
+
+	// right to left
+	if remaining(matrix, i+1, j+1, -1, -1, substr) && remaining(matrix, i+1, j-1, -1, 1, substr) {
+		total++
+	}
+
+	return total
+}
+
+// CrossSeach searches for the crossed word diagonally
+func CrossSearch(matrix [][]rune) int {
+	cnt := 0
+	// Find first letter in the matrix, then check each direction
+	for i := range matrix {
+		for j := range matrix[0] {
+			if matrix[i][j] == 'A' {
+				cnt += countX(matrix, i, j, "MAS")
+			}
+		}
+	}
+
 	return cnt
 }

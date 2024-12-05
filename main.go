@@ -18,4 +18,5 @@ func main() {
 	three.PartTwo()
 
 	four.PartOne()
+	four.PartTwo()
 }
