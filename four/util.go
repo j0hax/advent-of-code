@@ -2,28 +2,33 @@ package four
 
 import (
 	"bufio"
-	"fmt"
 	"os"
+	"strings"
 )
 
-func PrintMatrix[T rune](mat [][]T) {
-	for i := range mat {
-		for j := range mat[i] {
-			fmt.Print(string(mat[i][j]))
+type WordSearch [][]rune
+
+func (w WordSearch) String() string {
+	var b strings.Builder
+	for i := range w {
+		for j := range w[i] {
+			b.WriteRune(w[i][j])
 		}
-		fmt.Print("\n")
+		b.WriteRune('\n')
 	}
+
+	return b.String()
 }
 
-// ReadMatrix reads a file into a [][]rune
-func ReadMatrix(filename string) [][]rune {
-	file, err := os.Open("./input4")
+// ReadWordSearch reads a file into a [][]rune
+func ReadWordSearch(filename string) WordSearch {
+	file, err := os.Open(filename)
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
 
-	var matrix [][]rune
+	var matrix WordSearch
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -34,16 +39,15 @@ func ReadMatrix(filename string) [][]rune {
 	return matrix
 }
 
-// inBounds simply checks if a given coordinate is within the bounds of the
-// matrix
-func inBounds[T any](matrix [][]T, i, j int) bool {
+// InBounds simply checks if a given coordinate is within the bounds of a
+// two-dimensional slice ("matrix")
+func InBounds[T any](matrix [][]T, i, j int) bool {
 	return i >= 0 && j >= 0 && i < len(matrix) && j < len(matrix[i])
 }
 
 // remaining recursively checks to see if the substring matches for the rest of
 // the matrix in a given direction.
-func remaining(matrix [][]rune, i, j, di, dj int, substr string) bool {
-
+func (matrix WordSearch) remaining(i, j, di, dj int, substr string) bool {
 	// condition 0:
 	// empty substring means we have reached the end of recursion.
 	if len(substr) == 0 {
@@ -52,7 +56,7 @@ func remaining(matrix [][]rune, i, j, di, dj int, substr string) bool {
 
 	// condition 1:
 	// coords must be in-bounds
-	if !inBounds(matrix, i, j) {
+	if !InBounds(matrix, i, j) {
 		return false
 	}
 
@@ -63,99 +67,105 @@ func remaining(matrix [][]rune, i, j, di, dj int, substr string) bool {
 	}
 
 	// check the rest
-	return remaining(matrix, i+di, j+dj, di, dj, substr[1:])
+	return matrix.remaining(i+di, j+dj, di, dj, substr[1:])
 }
 
 // countDirs checks the matrix at the given position for the substring in each
 // direction
-func countDirs(matrix [][]rune, i, j int, substr string) int {
+func (matrix WordSearch) countDirs(i, j int, substr string) int {
 	total := 0
 	// up
-	if remaining(matrix, i, j, 0, 1, substr) {
+	if matrix.remaining(i, j, 0, 1, substr) {
 		total++
 	}
 	// down
-	if remaining(matrix, i, j, 0, -1, substr) {
+	if matrix.remaining(i, j, 0, -1, substr) {
 		total++
 	}
 	// backwards
-	if remaining(matrix, i, j, -1, 0, substr) {
+	if matrix.remaining(i, j, -1, 0, substr) {
 		total++
 	}
 	// forwards
-	if remaining(matrix, i, j, 1, 0, substr) {
+	if matrix.remaining(i, j, 1, 0, substr) {
 		total++
 	}
 
 	// diag up
-	if remaining(matrix, i, j, 1, 1, substr) {
+	if matrix.remaining(i, j, 1, 1, substr) {
 		total++
 	}
 	// diag down
-	if remaining(matrix, i, j, 1, -1, substr) {
+	if matrix.remaining(i, j, 1, -1, substr) {
 		total++
 	}
 	// diag backwards up
-	if remaining(matrix, i, j, -1, 1, substr) {
+	if matrix.remaining(i, j, -1, 1, substr) {
 		total++
 	}
 	// diag backwards down
-	if remaining(matrix, i, j, -1, -1, substr) {
+	if matrix.remaining(i, j, -1, -1, substr) {
 		total++
 	}
 
 	return total
 }
 
-// WordSearch searches for the word in all directions in the matrix
-func WordSearch(matrix [][]rune, substr string) int {
+// Count searches for the word in all directions (left/right, up/down, and
+// diagonally in the matrix, returning the number of found strings.
+func (w WordSearch) Count(substr string) int {
 	cnt := 0
 	// Find first letter in the matrix, then check each direction
-	for i := range matrix {
-		for j := range matrix[0] {
-			if matrix[i][j] == rune(substr[0]) {
-				cnt += countDirs(matrix, i, j, substr)
+	for i := range w {
+		for j := range w[0] {
+			if w[i][j] == rune(substr[0]) {
+				cnt += w.countDirs(i, j, substr)
 			}
 		}
 	}
 	return cnt
 }
 
-// something
-func countX(matrix [][]rune, i, j int, substr string) int {
-	total := 0
-
+// countX is a helper method for CrossCount, returning true if the specified
+// indices are at the center of the crossed substring.
+func (w WordSearch) countX(i, j int, substr string) bool {
 	// left to right
-	if remaining(matrix, i-1, j-1, 1, 1, substr) && remaining(matrix, i-1, j+1, 1, -1, substr) {
-		total++
+	if w.remaining(i-1, j-1, 1, 1, substr) && w.remaining(i-1, j+1, 1, -1, substr) {
+		return true
 	}
 
 	// top to bottom
-	if remaining(matrix, i+1, j+1, -1, -1, substr) && remaining(matrix, i-1, j+1, 1, -1, substr) {
-		total++
+	if w.remaining(i+1, j+1, -1, -1, substr) && w.remaining(i-1, j+1, 1, -1, substr) {
+		return true
 	}
 
 	// bottom to top
-	if remaining(matrix, i-1, j-1, 1, 1, substr) && remaining(matrix, i+1, j-1, -1, 1, substr) {
-		total++
+	if w.remaining(i-1, j-1, 1, 1, substr) && w.remaining(i+1, j-1, -1, 1, substr) {
+		return true
 	}
 
 	// right to left
-	if remaining(matrix, i+1, j+1, -1, -1, substr) && remaining(matrix, i+1, j-1, -1, 1, substr) {
-		total++
+	if w.remaining(i+1, j+1, -1, -1, substr) && w.remaining(i+1, j-1, -1, 1, substr) {
+		return true
 	}
 
-	return total
+	return false
 }
 
 // CrossSeach searches for the crossed word diagonally
-func CrossSearch(matrix [][]rune) int {
+func (w WordSearch) CrossCount(substr string) int {
 	cnt := 0
+
+	// Center rune of string
+	c := rune(substr[len(substr)/2])
+
 	// Find first letter in the matrix, then check each direction
-	for i := range matrix {
-		for j := range matrix[0] {
-			if matrix[i][j] == 'A' {
-				cnt += countX(matrix, i, j, "MAS")
+	for i := range w {
+		for j := range w[i] {
+			if w[i][j] == c {
+				if w.countX(i, j, substr) {
+					cnt++
+				}
 			}
 		}
 	}
