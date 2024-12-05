@@ -22,4 +22,5 @@ func main() {
 	four.PartTwo()
 
 	five.PartOne()
+	five.PartTwo()
 }
