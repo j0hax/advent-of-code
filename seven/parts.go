@@ -9,7 +9,20 @@ func PartOne(r io.Reader) int {
 
 	eqs := ParseEquations(r)
 	for _, e := range eqs {
-		if e.CountSolutions() > 0 {
+		if e.CountSolutions(false) > 0 {
+			total += e.total
+		}
+	}
+
+	return total
+}
+
+func PartTwo(r io.Reader) int {
+	total := 0
+
+	eqs := ParseEquations(r)
+	for _, e := range eqs {
+		if e.CountSolutions(true) > 0 {
 			total += e.total
 		}
 	}
