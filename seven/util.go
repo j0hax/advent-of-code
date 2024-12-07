@@ -15,6 +15,13 @@ type Equation struct {
 	operands []int
 }
 
+// Process replaces the first two items of the slice s with the result of the
+// operator function.
+func process(s []int, operator func(a, b int) int) []int {
+	result := operator(s[0], s[1])
+	return append([]int{result}, s[2:]...)
+}
+
 /*
 	CountSolutions recursively operates through each operand and counts the
 
@@ -24,7 +31,7 @@ if the total can not be formed by any combination of right-to-left operators.
 NOTE: For day 7 part one, all we really had to do was determine if the equation
 can be formed (not the count)... reading comprehension helps, folks ;)
 */
-func (eq *Equation) CountSolutions() int {
+func (eq *Equation) CountSolutions(concatenate bool) int {
 	if len(eq.operands) == 1 {
 		if eq.total == eq.operands[0] {
 			return 1
@@ -33,27 +40,39 @@ func (eq *Equation) CountSolutions() int {
 		}
 	}
 
-	multResult := eq.operands[0] * eq.operands[1]
-	multRest := append([]int{multResult}, eq.operands[2:]...)
-
-	addResult := eq.operands[0] + eq.operands[1]
-	addRest := append([]int{addResult}, eq.operands[2:]...)
-
-	fmt.Printf("%v -> %v\n", eq.operands, addRest)
-
-	// div
-	recDiv := Equation{
-		total:    eq.total,
-		operands: multRest,
+	taskList := []Equation{
+		{
+			total:    eq.total,
+			operands: process(eq.operands, func(a, b int) int { return a * b }),
+		},
+		{
+			total:    eq.total,
+			operands: process(eq.operands, func(a, b int) int { return a + b }),
+		},
 	}
 
-	// minus
-	recSub := Equation{
-		total:    eq.total,
-		operands: addRest,
+	if concatenate {
+		taskList = append(taskList, Equation{
+			total: eq.total,
+			operands: process(eq.operands,
+				func(a, b int) int {
+					numStr := fmt.Sprintf("%d%d", a, b)
+					num, err := strconv.Atoi(numStr)
+					if err != nil {
+						panic(err)
+					}
+
+					return num
+				}),
+		})
 	}
 
-	return recDiv.CountSolutions() + recSub.CountSolutions()
+	count := 0
+	for _, task := range taskList {
+		count += task.CountSolutions(concatenate)
+	}
+
+	return count
 }
 
 // ParseEquations reads the input stream and returns a list of equations.

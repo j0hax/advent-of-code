@@ -49,5 +49,5 @@ func main() {
 
 	//RunAll("./input6", six.PartOne, six.PartTwo)
 
-	RunAll("./input7", seven.PartOne)
+	RunAll("./input7", seven.PartOne, seven.PartTwo)
 }
