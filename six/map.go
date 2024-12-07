@@ -48,6 +48,15 @@ const (
 
 type grid [][]block
 
+func (g grid) Copy() grid {
+	newMatrix := make([][]block, len(g))
+	for i, row := range g {
+		newMatrix[i] = make([]block, len(row))
+		copy(newMatrix[i], row)
+	}
+	return newMatrix
+}
+
 func (g grid) String() string {
 	var b strings.Builder
 
@@ -100,6 +109,7 @@ func (g grid) move(fromr, fromc, tor, toc int) status {
 	switch g[tor][toc] {
 	case wall:
 		g[fromr][fromc].rotate()
+		return blocked
 	case empty, visited:
 		g[tor][toc], g[fromr][fromc] = g[fromr][fromc], visited
 	}
@@ -124,6 +134,10 @@ func (p *block) rotate() {
 // Step moves the guard one move
 func (g grid) Step() status {
 	r, c := g.GuardLocation()
+
+	if r < 0 {
+		return oob
+	}
 
 	var s status
 
