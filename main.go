@@ -7,6 +7,7 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/j0hax/aoc2024/eight"
 	"github.com/j0hax/aoc2024/five"
 	"github.com/j0hax/aoc2024/four"
 	"github.com/j0hax/aoc2024/one"
@@ -51,4 +52,5 @@ func main() {
 	RunParts(w, "./input5", five.PartOne, five.PartTwo)
 	//RunAll("./input6", six.PartOne, six.PartTwo)
 	RunParts(w, "./input7", seven.PartOne, seven.PartTwo)
+	RunParts(w, "./input8", eight.PartOne, eight.PartTwo)
 }
