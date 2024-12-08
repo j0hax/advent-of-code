@@ -46,11 +46,9 @@ func (p Point) String() string {
 }
 
 // Add adds dr and dc to the row and columns of the point, respectively
-func (p Point) Add(dr, dc int) Point {
-	nr := p.r + dr
-	nc := p.c + dc
-
-	return Point{nr, nc}
+func (p *Point) Add(dr, dc int) {
+	p.r += dr
+	p.c += dc
 }
 
 // AntinodesTo calculates the line-of-sight antinodes between two points
@@ -69,16 +67,11 @@ func (s SignalMap) AntinodesTo(a, b Point, includeOwn bool) []Point {
 	dr := a.r - b.r
 	dc := a.c - b.c
 
-	// Now add it to the point we are using
-	//nr := a.r + dr
-	//nc := a.c + dc
+	a.Add(dr, dc)
 
-	next := a.Add(dr, dc)
-
-	for s.InBounds(next) {
-		//next.Add(dr, dc)
-		antinodes = append(antinodes, next)
-		next = next.Add(dr, dc)
+	for s.InBounds(a) {
+		antinodes = append(antinodes, a)
+		a.Add(dr, dc)
 	}
 
 	return antinodes

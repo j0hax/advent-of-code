@@ -21,8 +21,6 @@ type point struct {
 	x, y int
 }
 
-func bfWorker(jobs <-chan grid, results <-chan int)
-
 func PartTwo(r io.Reader) int {
 	original := Load(r)
 
