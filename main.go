@@ -5,22 +5,26 @@ import (
 	"io"
 	"os"
 	"text/tabwriter"
+	"time"
 
 	"github.com/j0hax/aoc2024/five"
 	"github.com/j0hax/aoc2024/four"
 	"github.com/j0hax/aoc2024/one"
 	"github.com/j0hax/aoc2024/seven"
+
 	//"github.com/j0hax/aoc2024/six"
 	"github.com/j0hax/aoc2024/three"
 	"github.com/j0hax/aoc2024/two"
 )
 
+// Part is the function signature of one of two parts for a day.
+// It takes an io.Reader which contains the input, and returns the integer
+// solution
 type Part func(r io.Reader) int
 
-func RunAll(inputFile string, parts ...Part) {
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
-	//fmt.Printf("=== %s:\n", inputFile)
-	fmt.Fprintf(w, "%s\t\n", inputFile)
+// RunParts executes several part functions with one input file.
+func RunParts(w io.Writer, inputFile string, parts ...Part) {
+	fmt.Fprintf(w, "%s\tSolution\tTime\n", inputFile)
 	for i, p := range parts {
 		file, err := os.Open(inputFile)
 		if err != nil {
@@ -28,20 +32,23 @@ func RunAll(inputFile string, parts ...Part) {
 		}
 		defer file.Close()
 
+		start := time.Now()
 		result := p(file)
+		elapsed := time.Since(start)
 
-		//fmt.Printf("Part %d: %d\n", i+1, result)
-		fmt.Fprintf(w, "Part %d\t%d\n", i+1, result)
+		fmt.Fprintf(w, "Part %d\t%d\t%s\n", i+1, result, elapsed)
 	}
-	w.Flush()
 }
 
 func main() {
-	RunAll("./input1", one.PartOne, one.PartTwo)
-	RunAll("./input2", two.PartOne, two.PartTwo)
-	RunAll("./input3", three.PartOne, three.PartTwo)
-	RunAll("./input4", four.PartOne, four.PartTwo)
-	RunAll("./input5", five.PartOne, five.PartTwo)
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
+	defer w.Flush()
+
+	RunParts(w, "./input1", one.PartOne, one.PartTwo)
+	RunParts(w, "./input2", two.PartOne, two.PartTwo)
+	RunParts(w, "./input3", three.PartOne, three.PartTwo)
+	RunParts(w, "./input4", four.PartOne, four.PartTwo)
+	RunParts(w, "./input5", five.PartOne, five.PartTwo)
 	//RunAll("./input6", six.PartOne, six.PartTwo)
-	RunAll("./input7", seven.PartOne, seven.PartTwo)
+	RunParts(w, "./input7", seven.PartOne, seven.PartTwo)
 }
