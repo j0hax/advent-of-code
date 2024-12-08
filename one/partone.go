@@ -1,12 +1,12 @@
 package one
 
 import (
-	"fmt"
+	"io"
 	"math"
 )
 
-func PartOne() {
-	left, right := parseList("./input1")
+func PartOne(r io.Reader) int {
+	left, right := parseList(r)
 
 	solution := 0
 
@@ -16,5 +16,5 @@ func PartOne() {
 		solution += int(math.Abs(s))
 	}
 
-	fmt.Printf("Solution for Part One: %d\n", solution)
+	return solution
 }

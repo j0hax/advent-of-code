@@ -1,9 +1,8 @@
 package two
 
-import "os"
 import "bufio"
 import "strings"
-import "fmt"
+import "io"
 import "strconv"
 
 type Report []int
@@ -24,16 +23,10 @@ func atoiSlice(fields []string) ([]int, error) {
 	return intFields, nil
 }
 
-func ParseRecords(inputFile string) []Report {
-	file, err := os.Open(inputFile)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
+func ParseRecords(input io.Reader) []Report {
 	var r []Report
 
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(input)
 	for scanner.Scan() {
 		line := scanner.Text()
 
@@ -90,8 +83,8 @@ func (r Report) Safe() bool {
 	return true
 }
 
-func PartOne() {
-	records := ParseRecords("./input2")
+func PartOne(r io.Reader) int {
+	records := ParseRecords(r)
 
 	safeCnt := 0
 
@@ -101,5 +94,5 @@ func PartOne() {
 		}
 	}
 
-	fmt.Printf("Solution for Part One: %d\n", safeCnt)
+	return safeCnt
 }

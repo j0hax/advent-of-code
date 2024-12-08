@@ -2,8 +2,7 @@ package three
 
 import (
 	"bufio"
-	"fmt"
-	"os"
+	"io"
 	"regexp"
 	"strconv"
 	"strings"
@@ -27,20 +26,14 @@ func parse(mul string) (int, error) {
 	return (a * b), nil
 }
 
-func PartOne() {
-	file, err := os.Open("./input3")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
+func PartOne(r io.Reader) int {
 	solution := 0
 
 	// The expression for mul:
 	// match mul(x,x), with x containing between 1 to 3 digits.
 	re := regexp.MustCompile(`mul\(\d{1,3},\d{1,3}\)`)
 
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()
 		matches := re.FindAllString(line, -1)
@@ -54,17 +47,10 @@ func PartOne() {
 		}
 	}
 
-	fmt.Printf("Solution  for part one is %d\n", solution)
-
+	return solution
 }
 
-func PartTwo() {
-	file, err := os.Open("./input3")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
+func PartTwo(r io.Reader) int {
 	enabled := true
 	solution := 0
 
@@ -72,7 +58,7 @@ func PartTwo() {
 	// Match don't() or mul(x,y) or do()
 	re := regexp.MustCompile(`(don't\(\)|mul\(\d{1,3},\d{1,3}\)|do\(\))`)
 
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()
 		matches := re.FindAllString(line, -1)
@@ -90,6 +76,5 @@ func PartTwo() {
 			}
 		}
 	}
-
-	fmt.Printf("Solution for part two is %d\n", solution)
+	return solution
 }

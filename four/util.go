@@ -2,7 +2,7 @@ package four
 
 import (
 	"bufio"
-	"os"
+	"io"
 	"strings"
 )
 
@@ -21,16 +21,10 @@ func (w WordSearch) String() string {
 }
 
 // ReadWordSearch reads a file into a [][]rune
-func ReadWordSearch(filename string) WordSearch {
-	file, err := os.Open(filename)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
+func ReadWordSearch(r io.Reader) WordSearch {
 	var matrix WordSearch
 
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()
 		matrix = append(matrix, []rune(line))

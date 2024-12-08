@@ -1,23 +1,24 @@
 package four
 
 import (
-	"fmt"
+	"io"
 )
 
-func PartOne() {
-	words := ReadWordSearch("./input4")
+func PartOne(r io.Reader) int {
+	words := ReadWordSearch(r)
 	total := 0
 
 	total += words.Count("XMAS")
 
-	fmt.Printf("Solution to part one is: %d\n", total)
+	return total
+
 }
 
-func PartTwo() {
-	words := ReadWordSearch("./input4")
+func PartTwo(r io.Reader) int {
+	words := ReadWordSearch(r)
 	total := 0
 
 	total += words.CrossCount("MAS")
 
-	fmt.Printf("Solution to part two is: %d\n", total)
+	return total
 }

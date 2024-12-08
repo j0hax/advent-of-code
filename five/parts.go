@@ -1,15 +1,15 @@
 package five
 
-import "fmt"
+import "io"
 
-func PartOne() {
-	prot := ReadProtocol("./input5")
+func PartOne(r io.Reader) int {
+	prot := ReadProtocol(r)
 	s := prot.Correct()
-	fmt.Printf("Solution to part one: %d\n", s)
+	return s
 }
 
-func PartTwo() {
-	prot := ReadProtocol("./input5")
+func PartTwo(r io.Reader) int {
+	prot := ReadProtocol(r)
 	s := prot.FixIncorrect()
-	fmt.Printf("Solution to part two: %d\n", s)
+	return s
 }

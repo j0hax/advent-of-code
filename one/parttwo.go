@@ -1,7 +1,7 @@
 package one
 
 import (
-	"fmt"
+	"io"
 )
 
 func countOccurences(target int, s []int) int {
@@ -15,8 +15,8 @@ func countOccurences(target int, s []int) int {
 	return count
 }
 
-func PartTwo() {
-	left, right := parseList("./input1")
+func PartTwo(r io.Reader) int {
+	left, right := parseList(r)
 
 	solution := 0
 
@@ -26,5 +26,5 @@ func PartTwo() {
 		solution += left[i] * occ
 	}
 
-	fmt.Printf("Solution for Part Two: %d\n", solution)
+	return solution
 }

@@ -2,12 +2,10 @@ package five
 
 import (
 	"bufio"
-	"fmt"
-	"os"
+	"io"
+	"slices"
 	"strconv"
 	"strings"
-	//"sort"
-	"slices"
 )
 
 type Rule map[int][]int
@@ -84,10 +82,10 @@ func (p *Protocol) FixIncorrect() int {
 func (p *Protocol) Correct() int {
 	//var results []bool
 	sum := 0
-	for i, u := range p.updates {
+	for _, u := range p.updates {
 		//results = append(results, u.Correct(p.rules))
 		c := u.Correct(p.rules)
-		fmt.Printf("Row %d correct: %v\n", i, c)
+		//fmt.Printf("Row %d correct: %v\n", i, c)
 
 		if c {
 			l := len(u) / 2
@@ -117,18 +115,12 @@ func splitToInt(s, sep string) []int {
 }
 
 // ReadProtocol reads a file from disk and parses the contents to a Protocol
-func ReadProtocol(filename string) *Protocol {
-	file, err := os.Open(filename)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
+func ReadProtocol(r io.Reader) *Protocol {
 	p := Protocol{
 		rules: make(map[int][]int),
 	}
 
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		// Determine if the line is a rule or an update
 		line := scanner.Text()

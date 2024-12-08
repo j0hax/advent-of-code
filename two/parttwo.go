@@ -1,7 +1,7 @@
 package two
 
 import (
-	"fmt"
+	"io"
 )
 
 // removeAtIndex returns a new Report with the items deleted at index i.
@@ -40,8 +40,8 @@ func (r Report) DampenedSafe() bool {
 	return false
 }
 
-func PartTwo() {
-	records := ParseRecords("./input2")
+func PartTwo(r io.Reader) int {
+	records := ParseRecords(r)
 	safeCnt := 0
 
 	for _, rep := range records {
@@ -50,5 +50,5 @@ func PartTwo() {
 		}
 	}
 
-	fmt.Printf("Solution for Part Two: %d\n", safeCnt)
+	return safeCnt
 }

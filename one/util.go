@@ -2,7 +2,7 @@ package one
 
 import (
 	"bufio"
-	"os"
+	"io"
 	"slices"
 	"strconv"
 	"strings"
@@ -13,14 +13,8 @@ parseList opens the file passed to it, parses the first and second integer
 
 	of each line and returns the sorted columns.
 */
-func parseList(inputFile string) (left []int, right []int) {
-	file, err := os.Open(inputFile)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
+func parseList(input io.Reader) (left []int, right []int) {
+	scanner := bufio.NewScanner(input)
 
 	left = make([]int, 0)
 	right = make([]int, 0)
