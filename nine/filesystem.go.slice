@@ -1,0 +1,147 @@
+package nine
+
+import (
+	"bufio"
+	"io"
+	"slices"
+	//"strconv"
+	"strings"
+	"unicode"
+)
+
+type Block rune
+
+func (b Block) IsFile() bool {
+	return b != '.'
+}
+
+type DiskMap []Block
+
+func (dm DiskMap) String() string {
+	var sb strings.Builder
+	for _, b := range dm {
+		sb.WriteRune(rune(b))
+	}
+
+	return sb.String()
+}
+
+func (dm DiskMap) CheckSum() int {
+	chk := 0
+	for i := range dm {
+		if !dm[i].IsFile() {
+			continue
+		}
+		val := int(dm[i] - '0')
+		chk += i * val
+	}
+
+	return chk
+}
+
+// FirstFree returns the index of the first free space
+func (dm DiskMap) FirstFree() int {
+	return slices.IndexFunc(dm, func(n Block) bool {
+		return !n.IsFile()
+	})
+}
+
+// LastFile searches for the last file in the map
+func (dm DiskMap) LastFile() int {
+	for i := len(dm) - 1; i > 0; i-- {
+		if dm[i].IsFile() {
+			return i
+		}
+	}
+
+	return -1
+}
+
+func (dm DiskMap) defragStep() {
+	freeIdx := dm.FirstFree()
+	if freeIdx < 0 {
+		return
+	}
+
+	fileIdx := dm.LastFile()
+	if fileIdx < 0 {
+		return
+	}
+
+	// 1. Make the free space one shorter
+	// 2. Make the last element one shorter
+	// 3. Create a block with the ID at the front of the free space
+	// above is old, does not apply
+
+	// simple swap
+	dm[freeIdx], dm[fileIdx] = dm[fileIdx], '.'
+}
+
+func (dm DiskMap) IsFragmented() bool {
+	// Go though the map until a free piece is found. If a file comes after,
+	// we know it's fragmented.
+	foundFree := false
+
+	for i := range dm {
+		if !dm[i].IsFile() {
+			foundFree = true
+		} else if foundFree {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (dm DiskMap) Defragment() {
+	for dm.IsFragmented() {
+		dm.defragStep()
+	}
+}
+
+func ParseMap(r io.Reader) DiskMap {
+	scanner := bufio.NewScanner(r)
+	scanner.Split(bufio.ScanRunes)
+
+	var blocks []Block
+
+	// Alternate between file or space length:
+	// true means we are reading file length,
+	// false means we are reading space length.
+	file := true
+	id := 0
+
+	for scanner.Scan() {
+		char := scanner.Text()
+
+		// Skip non-numbers (whitespace)
+		if !unicode.IsDigit(rune(char[0])) {
+			continue
+		}
+
+		// String/char to int
+		/*
+			len, err := strconv.Atoi(char)
+			if err != nil {
+				panic(err)
+			}*/
+
+		len := int(char[0] - '0')
+
+		// Default to free space
+		val := '.'
+
+		if file {
+			val = rune(id + '0')
+			id++
+		}
+
+		for range len {
+			blocks = append(blocks, Block(val))
+		}
+
+		file = !file
+	}
+
+	return blocks
+}
