@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"text/tabwriter"
 	"time"
 
 	"github.com/j0hax/aoc2024/eight"
 	"github.com/j0hax/aoc2024/five"
 	"github.com/j0hax/aoc2024/four"
+	"github.com/j0hax/aoc2024/nine"
 	"github.com/j0hax/aoc2024/one"
 	"github.com/j0hax/aoc2024/seven"
 	"github.com/j0hax/aoc2024/six"
@@ -24,7 +26,8 @@ type Part func(r io.Reader) int
 
 // RunParts executes several part functions with one input file.
 func RunParts(w io.Writer, inputFile string, parts ...Part) {
-	fmt.Fprintf(w, "%s\tSolution\tTime\n", inputFile)
+	fname := filepath.Base(inputFile)
+	//fmt.Fprintf(w, "%s\t\t\t\n", fname)
 	for i, p := range parts {
 		file, err := os.Open(inputFile)
 		if err != nil {
@@ -34,9 +37,9 @@ func RunParts(w io.Writer, inputFile string, parts ...Part) {
 
 		start := time.Now()
 		result := p(file)
-		elapsed := time.Since(start)
+		elapsed := time.Since(start).Round(time.Microsecond)
 
-		fmt.Fprintf(w, "Part %d\t%d\t%s\n", i+1, result, elapsed)
+		fmt.Fprintf(w, "[%s]\tPart %d\t%d\t%s\n", fname, i+1, result, elapsed)
 	}
 }
 
@@ -52,4 +55,5 @@ func main() {
 	RunParts(w, "./input6", six.PartOne) //six.PartTwo)
 	RunParts(w, "./input7", seven.PartOne, seven.PartTwo)
 	RunParts(w, "./input8", eight.PartOne, eight.PartTwo)
+	RunParts(w, "./input9", nine.PartOne, nine.PartTwo)
 }
