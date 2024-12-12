@@ -123,9 +123,6 @@ func (s SignalMap) CountAntinodes(res bool) int {
 		i++
 	}
 
-	s.Print(keys)
-	fmt.Println("---")
-
 	return len(knownLocations)
 }
 

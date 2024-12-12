@@ -1,19 +1,14 @@
 package six
 
 import (
-	"fmt"
 	"io"
 )
 
 func PartOne(r io.Reader) int {
 	world := Load(r)
-
 	for world.Step() != oob {
 
 	}
-
-	fmt.Println(world)
-
 	return world.Count(visited)
 }
 
@@ -37,13 +32,10 @@ func PartTwo(r io.Reader) int {
 			orig := world[r][c]
 
 			if orig != empty {
-				//fmt.Printf("[%d, %d] Not empty, skipping...\n", r, c)
 				continue
 			}
 
 			world[r][c] = wall
-
-			//fmt.Printf("[%d, %d] Changed %s to %s\n", r, c, orig, wall)
 
 			iterations := 0
 
