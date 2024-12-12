@@ -2,7 +2,6 @@ package twelve
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 )
 
@@ -39,8 +38,76 @@ func (r *Region) Perimeter() int {
 	return totalP
 }
 
+func (r *Region) Corners() int {
+	totalP := 0
+
+	// Outside Corner Calculation
+	for p := range r.memberPoints {
+
+		_, n := r.memberPoints[Point{p.r, p.c + 1}]
+		_, e := r.memberPoints[Point{p.r + 1, p.c}]
+		_, w := r.memberPoints[Point{p.r - 1, p.c}]
+		_, s := r.memberPoints[Point{p.r, p.c - 1}]
+
+		_, ne := r.memberPoints[Point{p.r + 1, p.c + 1}]
+		_, sw := r.memberPoints[Point{p.r - 1, p.c - 1}]
+		_, nw := r.memberPoints[Point{p.r - 1, p.c + 1}]
+		_, se := r.memberPoints[Point{p.r + 1, p.c - 1}]
+
+		// Outside Corners
+		if !e && !n {
+			totalP++
+		}
+
+		if !s && !w {
+			totalP++
+		}
+
+		if !n && !w {
+			totalP++
+		}
+
+		if !s && !e {
+			totalP++
+		}
+
+		// Inside Corners
+		if n && e && !ne {
+			totalP++
+		}
+
+		if n && w && !nw {
+			totalP++
+		}
+
+		if s && e && !se {
+			totalP++
+		}
+
+		if s && w && !sw {
+			totalP++
+		}
+	}
+
+	return totalP
+}
+
+func (r *Region) Sides() int {
+	// Idea formula:
+	// Sides = (Area + Perimeter) - Corners
+	//return (r.Area() + r.Perimeter()) - r.Corners()
+	return r.Corners()
+}
+
 func (r *Region) Area() int {
 	return len(r.memberPoints)
+}
+
+func (r *Region) BulkPrice() int {
+	a := r.Area()
+	s := r.Sides()
+	b := a * s
+	return b
 }
 
 func (r Region) Price() int {
@@ -49,7 +116,6 @@ func (r Region) Price() int {
 
 	price := a * p
 
-	fmt.Printf("[%c] %d * %d = %d\n", r.char, a, p, price)
 	return price
 }
 
