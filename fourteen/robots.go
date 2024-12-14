@@ -3,7 +3,11 @@ package fourteen
 import (
 	"bufio"
 	"fmt"
+	"image"
+	"image/color"
+	"image/png"
 	"io"
+	"os"
 )
 
 type Robot struct {
@@ -28,6 +32,27 @@ func (f *Floor) RobotGrid() [][]int {
 	}
 
 	return g
+}
+
+func (floor *Floor) ToImage(path string) error {
+	img := image.NewGray(image.Rect(0, 0, floor.width, floor.height))
+	for _, r := range floor.robots {
+		img.Set(r.x, r.y, color.White)
+	}
+
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	err = png.Encode(f, img)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *Robot) Move(w, h int) {

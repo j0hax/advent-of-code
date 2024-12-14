@@ -1,7 +1,9 @@
 package fourteen
 
-import "io"
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
 func PartOne(r io.Reader) int {
 	f := ParseRobots(101, 103, r)
@@ -36,4 +38,24 @@ func PartOne(r io.Reader) int {
 	}
 
 	return answer
+}
+
+func PartTwo(r io.Reader) int {
+	robots := ParseRobots(101, 103, r)
+	counter := 0
+
+	for {
+		path := fmt.Sprintf("/tmp/step%d.png", counter)
+		if err := robots.ToImage(path); err != nil {
+			panic(err)
+		}
+		robots.Step()
+		counter++
+
+		if counter == 10000 {
+			break
+		}
+	}
+
+	return 0
 }

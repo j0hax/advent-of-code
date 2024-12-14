@@ -65,5 +65,5 @@ func main() {
 	RunParts(w, "./input11", eleven.PartOne, eleven.PartTwo)
 	RunParts(w, "./input12", twelve.PartOne, twelve.PartTwo)
 	RunParts(w, "./input13", thirteen.PartOne, thirteen.PartTwo)
-	RunParts(w, "./input14", fourteen.PartOne)
+	RunParts(w, "./input14", fourteen.PartOne, fourteen.PartTwo)
 }
