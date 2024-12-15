@@ -40,6 +40,14 @@ func PartOne(r io.Reader) int {
 	return answer
 }
 
+/*
+Because I had no Idea what to expect, part two took a brute-force approach in
+which I just dumped 10k little PNGs of the field.
+
+It turns out my input is 7572.
+
+TODO: build something to detect low entropy (=ordered pixels) automatically.
+*/
 func PartTwo(r io.Reader) int {
 	robots := ParseRobots(101, 103, r)
 	counter := 0
