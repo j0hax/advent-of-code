@@ -10,6 +10,7 @@ import (
 
 	"github.com/j0hax/aoc2024/eight"
 	"github.com/j0hax/aoc2024/eleven"
+	"github.com/j0hax/aoc2024/fifteen"
 	"github.com/j0hax/aoc2024/five"
 	"github.com/j0hax/aoc2024/four"
 	"github.com/j0hax/aoc2024/fourteen"
@@ -66,4 +67,5 @@ func main() {
 	RunParts(w, "./input12", twelve.PartOne, twelve.PartTwo)
 	RunParts(w, "./input13", thirteen.PartOne, thirteen.PartTwo)
 	RunParts(w, "./input14", fourteen.PartOne, fourteen.PartTwo)
+	RunParts(w, "./input15", fifteen.PartOne, fifteen.PartTwo)
 }
