@@ -5,6 +5,10 @@
 
 ## 2024
 
+<p align="center">
+  <img src="fourteen/step7572.png">
+</p>
+
 Implementing in Go with the [Helix](https://helix-editor.com/) editor. The code is purposefully more verbose than many other solutions I see in discussion threads because I try to mimic more complex projects. As such, I often declare custom types and take a Post-OOP approach of defining methods on these.
 
 My goal is to get **all stars** in a timely manner this year.[^stars]
