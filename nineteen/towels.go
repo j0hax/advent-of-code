@@ -37,14 +37,16 @@ type Designs struct {
 	Goals     [][]Color
 }
 
-func CanMake(memo map[string]bool, goal []Color, avail []Towel) bool {
+func CanMake(memo map[string]int, goal []Color, avail []Towel) int {
 	if len(goal) == 0 {
-		return true
+		return 1
 	}
 
 	if v, ok := memo[Towel(goal).String()]; ok {
 		return v
 	}
+
+	numWays := 0
 
 	// Check if next color can be used with any of the available
 	for _, next := range avail {
@@ -54,25 +56,36 @@ func CanMake(memo map[string]bool, goal []Color, avail []Towel) bool {
 
 			// Check if each val of next satisfies goal
 			if slices.Equal(next, head) {
-				if CanMake(memo, tail, avail) {
-					memo[Towel(tail).String()] = true
-					return true
+				if res := CanMake(memo, tail, avail); res > 0 {
+					memo[Towel(tail).String()] = res
+					numWays += res
 				}
 			}
 		}
 	}
 
-	memo[Towel(goal).String()] = false
-	return false
+	memo[Towel(goal).String()] = numWays
+	return numWays
 }
 
 func (d *Designs) CountPossible() int {
 	count := 0
 	for _, g := range d.Goals {
-		fmt.Println(g)
-		memo := make(map[string]bool)
-		if CanMake(memo, g, d.Available) {
+		memo := make(map[string]int)
+		if CanMake(memo, g, d.Available) > 0 {
 			count++
+		}
+	}
+
+	return count
+}
+
+func (d *Designs) CountWays() int {
+	count := 0
+	for _, g := range d.Goals {
+		memo := make(map[string]int)
+		if ways := CanMake(memo, g, d.Available); ways > 0 {
+			count += ways
 		}
 	}
 
