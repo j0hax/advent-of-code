@@ -1,14 +1,12 @@
 package twenty
 
 import (
-	"fmt"
 	"io"
 	"slices"
 )
 
 func PartOne(r io.Reader) int {
 	m := ParseTrack(r)
-	fmt.Println(m)
 
 	cheatList := m.CountCheats()
 
@@ -30,11 +28,15 @@ func PartOne(r io.Reader) int {
 		if v == 0 {
 			continue
 		}
-		fmt.Printf("There are %d cheats that save %d picoseconds\n", cheatCounts[v], v)
 		if v >= 100 {
 			goodCheat += cheatCounts[v]
 		}
 	}
 
 	return goodCheat
+}
+
+func PartTwo(r io.Reader) int {
+	track := ParseTrack(r)
+	return track.CountCheatsLen()
 }

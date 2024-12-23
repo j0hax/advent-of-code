@@ -91,6 +91,107 @@ func (m Track) CountCheats() map[Point]int {
 	return cheatList
 }
 
+type Cheat struct {
+	end Point
+	len int
+}
+
+var dirs = []Point{
+	{0, 1},
+	{0, -1},
+	{1, 0},
+	{-1, 0},
+}
+
+func (p Point) Add(a Point) Point {
+	return Point{
+		p.r + a.r,
+		p.c + a.c,
+	}
+}
+
+func (m Track) Get(p Point) Block {
+	return m.grid[p.r][p.c]
+}
+
+func (m Track) DistanceMatrix() [][]int {
+	// Create matrix of -1s all around
+	dists := make([][]int, len(m.grid))
+	for r := range dists {
+		dists[r] = make([]int, len(m.grid[r]))
+		for c := range dists[r] {
+			dists[r][c] = -1
+		}
+	}
+
+	// Set initial s
+	s := m.FindBlock(Start)
+	dists[s.r][s.c] = 0
+
+	for m.grid[s.r][s.c] != End {
+		for _, p := range dirs {
+			neighbor := s.Add(p)
+			if !m.InBounds(neighbor) {
+				continue
+			}
+			if m.Get(neighbor) == Wall {
+				continue
+			}
+			if dists[neighbor.r][neighbor.c] != -1 {
+				continue
+			}
+
+			dists[neighbor.r][neighbor.c] = dists[s.r][s.c] + 1
+
+			s = neighbor
+		}
+	}
+
+	return dists
+}
+
+func (m Track) CountCheatsLen() int {
+
+	dists := m.DistanceMatrix()
+
+	count := 0
+	for r := range m.grid {
+		for c := range m.grid[r] {
+			if m.grid[r][c] == Wall {
+				continue
+			}
+
+			for r := 2; r < 21; r++ {
+				for dy := 0; dy < r+1; dy++ {
+					dx := r - dy
+					dirs := []Point{
+						{r + dy, c + dx},
+						{r + dy, c - dx},
+						{r - dy, c + dx},
+						{r - dy, c - dx},
+					}
+
+					for _, p := range dirs {
+						if !m.InBounds(p) {
+							continue
+						}
+
+						if m.grid[p.r][p.c] == Wall {
+							continue
+						}
+
+						if (dists[r][c] - dists[p.r][p.c]) >= 100+r {
+							count++
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return count
+}
+
 func (m Track) InBounds(p Point) bool {
 	return p.r >= 0 && p.r < len(m.grid) && p.c >= 0 && p.c < len(m.grid[p.r])
 }

@@ -8,7 +8,6 @@ import (
 
 func PartOne(r io.Reader) int {
 	m := ParseRAM(r, 1024)
-	fmt.Println(m)
 	return m.Solve()
 }
 

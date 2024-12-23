@@ -21,14 +21,14 @@ const (
 	cdv
 )
 
-type Program struct {
+type Computer struct {
 	A, B, C  int
 	InstrPtr int
 	Program  []int
 	StdOut   []int
 }
 
-func (p *Program) Combo(op int) int {
+func (p *Computer) Combo(op int) int {
 	switch op {
 	case 0:
 		fallthrough
@@ -52,13 +52,11 @@ func (p *Program) Combo(op int) int {
 	return 0
 }
 
-func (p *Program) Exec() {
+func (p *Computer) Exec() {
 	var opcode Instruction
 	var operand int
 
 	opcode, operand = Instruction(p.Program[p.InstrPtr]), p.Program[p.InstrPtr+1]
-
-	fmt.Printf("[%d] %d\n", opcode, operand)
 
 	switch opcode {
 	case adv:
@@ -85,7 +83,7 @@ func (p *Program) Exec() {
 	p.InstrPtr += 2
 }
 
-func (p Program) String() string {
+func (p Computer) String() string {
 	var strs []string
 	for _, s := range p.StdOut {
 		strs = append(strs, strconv.Itoa(s))
@@ -94,7 +92,7 @@ func (p Program) String() string {
 	return strings.Join(strs, ",")
 }
 
-func (p *Program) Run() string {
+func (p *Computer) Run() string {
 	for p.InstrPtr < len(p.Program) {
 		p.Exec()
 	}
@@ -104,8 +102,14 @@ func (p *Program) Run() string {
 	return p.String()
 }
 
-func ParseProg(r io.Reader) *Program {
-	var prg Program
+func (p *Computer) Reset() {
+	p.A = 0
+	p.B = 0
+	p.C = 0
+}
+
+func ParseComputer(r io.Reader) *Computer {
+	var prg Computer
 
 	fmt.Fscanf(r, "Register A: %d\n", &prg.A)
 	fmt.Fscanf(r, "Register B: %d\n", &prg.B)
