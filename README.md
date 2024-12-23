@@ -20,3 +20,8 @@ I like this language: Although it's not perfect (is any language?), it combines 
 **Practice makes perfect:** I would like to work as a software developer focusing on Go 😉
 
 [^stars]: The holidays are a busy time for everyone; but I'm doing fine so far.
+
+### Lessons Learned
+
+- Memoization makes a **huge** difference in large recursion problems. I always took the approach of "solve first, optimize later," but realized the power of dynamic programming on day eleven, when simple but deep recursion algorithm can be reduced from many hours to milliseconds with only a hashmap.
+- Go Syntax: I somehow missed the part on [named return values](https://go.dev/tour/basics/7). It's a neat way to shorten code while improving legibility, I guess.
