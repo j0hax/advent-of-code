@@ -1,0 +1,160 @@
+package twentyone
+
+import (
+	"maps"
+	"slices"
+	"strings"
+)
+
+type Position struct {
+	x, y int
+}
+
+// Measures the Manhattan distance to another position
+func (a Position) Distance(b Position) (int, int) {
+	return a.x - b.x, a.y - b.y
+}
+
+// Measures the Manhattan distance to another position
+func (a Position) Add(b Position) Position {
+	return Position{a.x + b.x, a.y + b.y}
+}
+
+var KeyPad = map[rune]Position{
+	'7': {0, 0},
+	'8': {0, 1},
+	'9': {0, 2},
+	'4': {1, 0},
+	'5': {1, 1},
+	'6': {1, 2},
+	'1': {2, 0},
+	'2': {2, 1},
+	'3': {2, 2},
+	'0': {3, 1},
+	'A': {3, 2},
+}
+
+var dirPad = map[rune]Position{
+	'^': {0, 1},
+	'A': {0, 2},
+	'<': {1, 0},
+	'V': {1, 1},
+	'>': {1, 2},
+}
+
+var dirs = map[rune]Position{
+	'>': {0, 1},
+	'V': {1, 0},
+	'<': {0, -1},
+	'^': {-1, 0},
+}
+
+func permHelper[T any](res *[][]T, arr []T, n int) {
+	if n == 1 {
+		tmp := make([]T, len(arr))
+		copy(tmp, arr)
+		*res = append((*res), tmp)
+	} else {
+		for i := 0; i < n; i++ {
+			permHelper(res, arr, n-1)
+			if n%2 == 1 {
+				tmp := arr[i]
+				arr[i] = arr[n-1]
+				arr[n-1] = tmp
+			} else {
+				tmp := arr[0]
+				arr[0] = arr[n-1]
+				arr[n-1] = tmp
+			}
+		}
+	}
+}
+
+// Perm calls f with each permutation of a.
+func permutations[T any](arr []T) [][]T {
+	res := [][]T{}
+	permHelper(&res, arr, len(arr))
+	return res
+}
+
+func nextProduct[T any](a []T, r int) func() []T {
+	p := make([]int, r)
+	x := make([]T, len(p))
+	return func() []T {
+		p := p[:len(x)]
+		for i, xi := range x {
+			p[i] = a[xi]
+		}
+		for i := len(x) - 1; i >= 0; i-- {
+			x[i]++
+			if x[i] < len(a) {
+				break
+			}
+			x[i] = 0
+			if i <= 0 {
+				x = x[0:0]
+				break
+			}
+		}
+		return p
+	}
+}
+
+func Ways(code string, keypad map[rune]Position) {
+	var parts [][]string
+	cur_loc := keypad['A']
+
+	for _, c := range code {
+		next_loc := keypad[c]
+		dx, dy := cur_loc.Distance(next_loc)
+		var moves string
+
+		if dx > 0 {
+			moves += strings.Repeat("v", dx)
+		} else if dx < 0 {
+			moves += strings.Repeat("^", dx)
+		}
+
+		if dy > 0 {
+			moves += strings.Repeat(">", dy)
+		} else if dy < 0 {
+			moves += strings.Repeat("<", dy)
+		}
+
+		raw_combos := permutations([]rune(moves))
+		// Add an 'A' to each
+		for i := range raw_combos {
+			raw_combos[i] = append(raw_combos[i], 'A')
+		}
+
+		var combos []string
+
+		for _, combo := range raw_combos {
+			good := true
+			for _, c := range combo[:len(combo)-1] {
+				d := dirs[c]
+				pos := cur_loc.Add(d)
+
+				// now check if pos is contained in keypad:
+				contained := false
+				for _, v := range keypad {
+					if v == pos {
+						contained = true
+					}
+				}
+
+				if !contained {
+					good = false
+					break
+				}
+
+				if good {
+					combos = append(combos, string(combo))
+				}
+			}
+		}
+
+		parts = append(parts, combos)
+		cur_loc = next_loc
+	}
+}
